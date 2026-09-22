@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.ui.components.IslamicGeometricBackground
+import com.example.ui.components.PrivacyPolicyDialog
+import com.example.ui.components.PrivacyPolicySummaryCard
 import com.example.ui.theme.*
 import com.example.viewmodel.AlHujurViewModel
 
@@ -41,6 +43,7 @@ fun ProfileScreen(
     val calculationMethod by viewModel.calculationMethod.collectAsState()
 
     var showEditProfileDialog by remember { mutableStateOf(false) }
+    var showPrivacyPolicyDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -90,8 +93,15 @@ fun ProfileScreen(
                 onSelectMethod = { viewModel.updateProfile(userName, spiritualGoal, it) }
             )
 
+            // Privacy Policy & Security Card
+            PrivacyPolicySummaryCard(
+                onViewPrivacyPolicy = { showPrivacyPolicyDialog = true }
+            )
+
             // App & Scholar AI Info Card
-            AboutAppCard()
+            AboutAppCard(
+                onViewPrivacyPolicy = { showPrivacyPolicyDialog = true }
+            )
         }
     }
 
@@ -105,6 +115,12 @@ fun ProfileScreen(
                 viewModel.updateProfile(name, goal, method)
                 showEditProfileDialog = false
             }
+        )
+    }
+
+    if (showPrivacyPolicyDialog) {
+        PrivacyPolicyDialog(
+            onDismiss = { showPrivacyPolicyDialog = false }
         )
     }
 }
@@ -466,7 +482,9 @@ private fun TogglesSettingsCard(
 }
 
 @Composable
-private fun AboutAppCard() {
+private fun AboutAppCard(
+    onViewPrivacyPolicy: () -> Unit = {}
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -475,7 +493,7 @@ private fun AboutAppCard() {
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -500,11 +518,35 @@ private fun AboutAppCard() {
                 fontSize = 12.sp,
                 lineHeight = 18.sp
             )
-            Text(
-                text = "ভার্সন ১.০ • গুগল এআই স্টুডিও",
-                color = IslamicGold.copy(alpha = 0.7f),
-                fontSize = 11.sp
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "ভার্সন ২.০ • গুগল এআই স্টুডিও",
+                    color = IslamicGold.copy(alpha = 0.8f),
+                    fontSize = 11.sp
+                )
+                TextButton(
+                    onClick = onViewPrivacyPolicy,
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Security,
+                        contentDescription = null,
+                        tint = BrightGold,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "প্রাইভেসি পলিসি",
+                        color = BrightGold,
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
         }
     }
 }
